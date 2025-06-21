@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include "backend.h"
 #include "tasksmodel.h"
+#include "taskfilterproxymodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,8 +17,12 @@ int main(int argc, char *argv[])
 
     Backend backend;
     TasksModel tasksModel;
+    TaskFilterProxyModel taskFilterModel;
+    taskFilterModel.setSourceModel(&tasksModel);
+
     engine.rootContext()->setContextProperty("backend", &backend);
     engine.rootContext()->setContextProperty("tasksModel", &tasksModel);
+    engine.rootContext()->setContextProperty("taskFilterModel", &taskFilterModel);
 
     engine.load(QUrl(QStringLiteral("qrc:/qt/qml/squishtests/main.qml")));
     if (engine.rootObjects().isEmpty())

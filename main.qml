@@ -24,15 +24,15 @@ ApplicationWindow {
 
             ToolButton {
                 text: "All"
-                onClicked: filter = "all"
+                onClicked: taskFilterModel.filter = "all"
             }
             ToolButton {
                 text: "Active"
-                onClicked: filter = "active"
+                onClicked: taskFilterModel.filter = "active"
             }
             ToolButton {
                 text: "Completed"
-                onClicked: filter = "completed"
+                onClicked: taskFilterModel.filter = "completed"
             }
 
             ToolButton {
@@ -46,9 +46,9 @@ ApplicationWindow {
         id: tasksList
         anchors.fill: parent
         anchors.topMargin: header
-        model: tasksModel
+        model: taskFilterModel
         delegate: Rectangle {
-            width: parent.width
+            width: (parent !== null) ? parent.width : 0
             height: 50
             color: model.completed ? "#cfc" : "#fff"
 
@@ -59,11 +59,11 @@ ApplicationWindow {
                 CheckBox {
                     id: check
                     checked: model.completed
-                    onClicked: tasksModel.editTaskCompleted(index, checked)
+                    onClicked: taskFilterModel.editTaskCompleted(index, checked)
                 }
                 Item {
-                    width: parent.height
-                    height: textElement.paintedHeight
+                    width: textElement.paintedWidth
+                    height: parent.height
 
                     Text {
                         id: textElement
@@ -83,10 +83,6 @@ ApplicationWindow {
                     }
                 }
             }
-
-            visible: (filter === "all")
-                     || (filter === "active" && !model.completed)
-                     || (filter === "completed" && model.completed)
         }
     }
 
@@ -109,7 +105,7 @@ ApplicationWindow {
                         newTaskDialog.close()
                         return
                     }
-                    tasksModel.addTask(nameField.text);
+                    taskFilterModel.addTask(nameField.text);
                     nameField.text = ""
                     newTaskDialog.close()
                 }
@@ -136,7 +132,7 @@ ApplicationWindow {
                         editTaskDialog.close()
                         return
                     }
-                    tasksModel.editTaskName(editName.text, taskSelected)
+                    taskFilterModel.editTaskName(editName.text, taskSelected)
                     editTaskDialog.close()
                 }
             }
@@ -145,7 +141,7 @@ ApplicationWindow {
                 onClicked: {
                     editTaskDialog.close()
                     Qt.callLater(function() {
-                    tasksModel.removeTask(taskSelected)
+                    taskFilterModel.removeTask(taskSelected)
                     })
                 }
             }

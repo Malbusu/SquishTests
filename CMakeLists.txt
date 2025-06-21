@@ -19,6 +19,8 @@ qt_add_executable(appSquishTests
     Task.cpp
     tasksmodel.h
     tasksmodel.cpp
+    taskfilterproxymodel.h
+    taskfilterproxymodel.cpp
 )
 
 target_sources(appSquishTests PRIVATE ${RESOURCES})
