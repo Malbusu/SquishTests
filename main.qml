@@ -48,7 +48,7 @@ ApplicationWindow {
         anchors.topMargin: header
         model: taskFilterModel
         delegate: Rectangle {
-            width: (parent !== null) ? parent.width : 0
+            width: ListView.view ? ListView.view.width : 0
             height: 50
             color: model.completed ? "#cfc" : "#fff"
 
@@ -77,6 +77,7 @@ ApplicationWindow {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             editName.text = model.name
+                            editCheck.checked = check.checked
                             taskSelected = index
                             editTaskDialog.open()
                         }
@@ -121,28 +122,55 @@ ApplicationWindow {
         anchors.centerIn: parent
         ColumnLayout {
             spacing: 10
-            TextField {
-                id: editName
-                placeholderText: "Name of the Task"
-            }
-            Button {
-                text: "Save"
-                onClicked: {
-                    if (editName.text.length === 0){
-                        editTaskDialog.close()
-                        return
+            RowLayout {
+                Label {
+                    text: "Name:"
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.preferredWidth: 100
+                }
+                TextField {
+                    id: editName
+                    placeholderText: "Name of the Task"
+                }
                     }
-                    taskFilterModel.editTaskName(editName.text, taskSelected)
-                    editTaskDialog.close()
+            RowLayout {
+                Label {
+                    text: "Completed:"
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.preferredWidth: 100
+                }
+                CheckBox {
+                    id: editCheck
                 }
             }
-            Button {
-                text: "Remove"
-                onClicked: {
-                    editTaskDialog.close()
-                    Qt.callLater(function() {
-                    taskFilterModel.removeTask(taskSelected)
-                    })
+            RowLayout {
+                Layout.alignment: Qt.AlignCenter
+                Button {
+                    text: "Save"
+                    onClicked: {
+                        if (editName.text.length === 0){
+                            editTaskDialog.close()
+                            return
+                        }
+                        taskFilterModel.editTaskName(editName.text, taskSelected)
+                        taskFilterModel.editTaskCompleted(taskSelected, editCheck.checked)
+                        editTaskDialog.close()
+                    }
+                }
+                Button {
+                    text: "Remove"
+                    onClicked: {
+                        editTaskDialog.close()
+                        Qt.callLater(function() {
+                        taskFilterModel.removeTask(taskSelected)
+                        })
+                    }
+                }
+                Button {
+                    text: "Cancel"
+                    onClicked: {
+                        editTaskDialog.close()
+                    }
                 }
             }
         }
