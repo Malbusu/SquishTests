@@ -16,7 +16,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     Backend backend;
+
     TasksModel tasksModel;
+    tasksModel.loadTasks("./tasks.json");
     TaskFilterProxyModel taskFilterModel;
     taskFilterModel.setSourceModel(&tasksModel);
 

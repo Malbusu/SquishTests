@@ -4,6 +4,8 @@
 #include <qobject.h>
 #include <QAbstractListModel>
 #include "Task.h"
+#include <QFile>
+#include <QJsonArray>
 
 class TasksModel : public QAbstractListModel
 {
@@ -14,19 +16,23 @@ public:
         CompletedRole
     };
 
-    explicit TasksModel(QObject *parent = nullptr) : QAbstractListModel(parent){};
+    explicit TasksModel(QObject *parent = nullptr) :  QAbstractListModel(parent){};
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void addTask(const QString &name);
-    Q_INVOKABLE void removeTask(int index);
-    Q_INVOKABLE void editTaskName(QString name, int index);
-    Q_INVOKABLE void editTaskCompleted(int index, bool completed);
+    void addTask(const QString &name, bool completed);
+    void removeTask(int index);
+    void editTaskName(QString name, int index);
+    void editTaskCompleted(int index, bool completed);
+
+    void saveTasks();
+    void loadTasks(QString path);
 
 private:
     QVector<Task*> m_tasks;
+    QJsonArray m_tasksJson;
 };
 
 #endif // TASKSMODEL_H

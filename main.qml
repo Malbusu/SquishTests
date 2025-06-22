@@ -37,7 +37,7 @@ ApplicationWindow {
 
             ToolButton {
                 text: "WindowWidget"
-                onClicked: Qt.callLater(function() { backend.mostrarVentanaWidgets() })
+                onClicked: Qt.callLater(function() { backend.mostrarVentanaWidgets()})
             }
         }
     }
@@ -147,11 +147,8 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignCenter
                 Button {
                     text: "Save"
+                    enabled: editName.text.length > 0
                     onClicked: {
-                        if (editName.text.length === 0){
-                            editTaskDialog.close()
-                            return
-                        }
                         taskFilterModel.editTaskName(editName.text, taskSelected)
                         taskFilterModel.editTaskCompleted(taskSelected, editCheck.checked)
                         editTaskDialog.close()

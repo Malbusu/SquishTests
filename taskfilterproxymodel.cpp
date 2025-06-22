@@ -20,29 +20,35 @@ void TaskFilterProxyModel::setFilter(const QString &filter) {
 
     m_filter = filter;
     invalidateFilter();
-
     emit filterChanged();
 }
 
 void TaskFilterProxyModel::addTask(const QString &name){
-    TasksModel* model = qobject_cast<TasksModel*>(sourceModel());
-    model->addTask(name);
+    auto model = qobject_cast<TasksModel*>(sourceModel());
+    model->addTask(name, false);
+    model->saveTasks();
 };
 
 void TaskFilterProxyModel::removeTask(int idx){
-    QModelIndex proxyIndex = index(idx, 0);
-    QModelIndex sourceIndex = mapToSource(proxyIndex);
-    static_cast<TasksModel*>(sourceModel())->removeTask(sourceIndex.row());
+    auto proxyIndex = index(idx, 0);
+    auto sourceIndex = mapToSource(proxyIndex);
+    auto model = qobject_cast<TasksModel*>(sourceModel());
+    model->removeTask(sourceIndex.row());
+    model->saveTasks();
 };
 
 void TaskFilterProxyModel::editTaskName(QString name, int idx){
-    QModelIndex proxyIndex = index(idx, 0);
-    QModelIndex sourceIndex = mapToSource(proxyIndex);
-    static_cast<TasksModel*>(sourceModel())->editTaskName(name, sourceIndex.row());
+    auto proxyIndex = index(idx, 0);
+    auto sourceIndex = mapToSource(proxyIndex);
+    auto model = qobject_cast<TasksModel*>(sourceModel());
+    model->editTaskName(name, sourceIndex.row());
+    model->saveTasks();
 };
 
 void TaskFilterProxyModel::editTaskCompleted(int idx, bool completed){
-    QModelIndex proxyIndex = index(idx, 0);
-    QModelIndex sourceIndex = mapToSource(proxyIndex);
-    static_cast<TasksModel*>(sourceModel())->editTaskCompleted(sourceIndex.row(), completed);
+    auto proxyIndex = index(idx, 0);
+    auto sourceIndex = mapToSource(proxyIndex);
+    auto model = qobject_cast<TasksModel*>(sourceModel());
+    model->editTaskCompleted(sourceIndex.row(), completed);
+    model->saveTasks();
 };
