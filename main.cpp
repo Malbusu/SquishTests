@@ -12,13 +12,11 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication app(argc, argv);
-
-    QQmlApplicationEngine engine;
-
-    Backend backend;
+    QQmlApplicationEngine engine; 
 
     TasksModel tasksModel;
-    tasksModel.loadTasks("./tasks.json");
+    tasksModel.loadTasks();
+    Backend backend(&tasksModel);
     TaskFilterProxyModel taskFilterModel;
     taskFilterModel.setSourceModel(&tasksModel);
 

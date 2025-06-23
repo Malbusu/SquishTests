@@ -27,8 +27,13 @@ public:
     void editTaskName(QString name, int index);
     void editTaskCompleted(int index, bool completed);
 
+    double getCompletedPercentage();
+    int getCompleted();
+    int getRemaining();
+
     void saveTasks();
-    void loadTasks(QString path);
+    void loadTasks();
+    void clearAllTasks();
 
 private:
     QVector<Task*> m_tasks;

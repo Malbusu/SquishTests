@@ -1,20 +1,21 @@
 #include "Backend.h"
-#include <QWidget>
-#include <QLabel>
-#include <QVBoxLayout>
+#include "tasksstatswindow.h"
+#include "tasksmodel.h"
 
-Backend::Backend(QObject* parent) : QObject(parent) {
+Backend::Backend(TasksModel *model, QObject* parent) : m_taskModel(model), QObject(parent) {
 }
 
 void Backend::mostrarVentanaWidgets() {
-    QWidget* ventana = new QWidget;
-    ventana->setWindowTitle("Ventana QtWidgets");
-    ventana->resize(300, 100);
+    auto *window = new TasksStatsWindow();
+    window->setWindowTitle("Statistics");
+    window->resize(300,100);
+    window->show();
+    window->connect(window->getResetButton(), &QPushButton::clicked, this, &Backend::resetRequested);
+    connect(this, &Backend::updateStats, window, &TasksStatsWindow::updateData);
+    emit updateStats(m_taskModel->getCompletedPercentage(), m_taskModel->getCompleted(), m_taskModel->getRemaining());
+}
 
-    QVBoxLayout* layout = new QVBoxLayout(ventana);
-    QLabel* label = new QLabel("Esta es una ventana usando QtWidgets", ventana);
-    layout->addWidget(label);
-
-    ventana->setLayout(layout);
-    ventana->show();
+void Backend::resetRequested(){
+    m_taskModel->clearAllTasks();
+    emit updateStats(m_taskModel->getCompletedPercentage(), m_taskModel->getCompleted(), m_taskModel->getRemaining());
 }
