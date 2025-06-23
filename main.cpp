@@ -4,6 +4,7 @@
 #include "backend.h"
 #include "tasksmodel.h"
 #include "taskfilterproxymodel.h"
+#include "tasksstatswindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +17,8 @@ int main(int argc, char *argv[])
 
     TasksModel tasksModel;
     tasksModel.loadTasks();
-    Backend backend(&tasksModel);
+    TasksStatsWindow windowStats;
+    Backend backend(&tasksModel, &windowStats);
     TaskFilterProxyModel taskFilterModel;
     taskFilterModel.setSourceModel(&tasksModel);
 

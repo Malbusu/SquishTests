@@ -18,6 +18,8 @@ public:
     Q_INVOKABLE void editTaskName(QString name, int index);
     Q_INVOKABLE void editTaskCompleted(int index, bool completed);
 
+    void persist();
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 

@@ -46,9 +46,9 @@ ApplicationWindow {
 
             ToolButton {
                 objectName: "btnShowStats"
-                text: "WindowWidget"
+                text: "Statistics"
                 Layout.fillWidth: true
-                onClicked: Qt.callLater(function() { backend.mostrarVentanaWidgets() })
+                onClicked: Qt.callLater(function() { backend.showStatistics() })
             }
         }
     }

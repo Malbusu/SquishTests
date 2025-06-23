@@ -5,14 +5,15 @@
 
 #include <QObject>
 #include "tasksmodel.h"
+#include "tasksstatswindow.h"
 
 class Backend : public QObject {
     Q_OBJECT
 public:
-    explicit Backend(TasksModel *model, QObject* parent = nullptr);
+    explicit Backend(TasksModel *model,  TasksStatsWindow *window,QObject* parent = nullptr);
 
 public slots:
-    Q_INVOKABLE void mostrarVentanaWidgets();
+    Q_INVOKABLE void showStatistics();
     void resetRequested();
 
 signals:
@@ -20,6 +21,7 @@ signals:
 
 private:
     TasksModel *m_taskModel;
+    TasksStatsWindow *m_window;
 };
 
 #endif // BACKEND_H

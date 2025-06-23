@@ -22,8 +22,7 @@ QPushButton *TasksStatsWindow::getResetButton(){
     return btnReset;
 }
 
-void TasksStatsWindow::updateData(double percentage, int completed, int remaining){
-    qDebug() << "percentage" << percentage;
+void TasksStatsWindow::updateStatisticsWindow(double percentage, int completed, int remaining){
     labelPercentage->setText(QString("Completed tasks percentage: %1%").arg(percentage,0,'f',2));
     labelCompleted->setText(QString("Completed tasks:: %1").arg(completed));
     labelRemaining->setText(QString("Remaining tasks: %1").arg(remaining));

@@ -27,9 +27,9 @@ public:
     void editTaskName(QString name, int index);
     void editTaskCompleted(int index, bool completed);
 
-    double getCompletedPercentage();
-    int getCompleted();
-    int getRemaining();
+    double calculateCompletedPercentage();
+    int countCompleted();
+    int countRemaining();
 
     void saveTasks();
     void loadTasks();
@@ -37,7 +37,6 @@ public:
 
 private:
     QVector<Task*> m_tasks;
-    QJsonArray m_tasksJson;
 };
 
 #endif // TASKSMODEL_H

@@ -26,7 +26,7 @@ void TaskFilterProxyModel::setFilter(const QString &filter) {
 void TaskFilterProxyModel::addTask(const QString &name){
     auto model = qobject_cast<TasksModel*>(sourceModel());
     model->addTask(name, false);
-    model->saveTasks();
+    persist();
 };
 
 void TaskFilterProxyModel::removeTask(int idx){
@@ -34,6 +34,7 @@ void TaskFilterProxyModel::removeTask(int idx){
     QModelIndex sourceIndex = mapToSource(proxyIndex);
     auto model = qobject_cast<TasksModel*>(sourceModel());
     model->removeTask(sourceIndex.row());
+    persist();
 };
 
 void TaskFilterProxyModel::editTaskName(QString name, int idx){
@@ -41,6 +42,7 @@ void TaskFilterProxyModel::editTaskName(QString name, int idx){
     QModelIndex sourceIndex = mapToSource(proxyIndex);
     auto model = qobject_cast<TasksModel*>(sourceModel());
     model->editTaskName(name, sourceIndex.row());
+    persist();
 };
 
 void TaskFilterProxyModel::editTaskCompleted(int idx, bool completed){
@@ -48,4 +50,10 @@ void TaskFilterProxyModel::editTaskCompleted(int idx, bool completed){
     QModelIndex sourceIndex = mapToSource(proxyIndex);
     auto model = qobject_cast<TasksModel*>(sourceModel());
     model->editTaskCompleted(sourceIndex.row(), completed);
+    persist();
 };
+
+void TaskFilterProxyModel::persist(){
+    if(auto model = qobject_cast<TasksModel*>(sourceModel()))
+        model->saveTasks();
+}

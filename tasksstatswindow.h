@@ -14,7 +14,7 @@ public:
     QPushButton* getResetButton();
 
 public slots:
-    void updateData(double percentage, int completed, int remaining);
+    void updateStatisticsWindow(double percentage, int completed, int remaining);
 
 private:
     QLabel *labelPercentage;

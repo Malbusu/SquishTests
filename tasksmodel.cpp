@@ -32,11 +32,6 @@ void TasksModel::addTask(const QString &name, bool completed){
     beginInsertRows(QModelIndex(), m_tasks.size(), m_tasks.size());
     m_tasks.append(new Task(name, completed, this));
     endInsertRows();
-    QJsonObject task;
-    task["name"] = name;
-    task["completed"] = completed;
-    m_tasksJson.append(task);
-    saveTasks();
 }
 
 void TasksModel::removeTask(int index){
@@ -45,9 +40,7 @@ void TasksModel::removeTask(int index){
 
     beginRemoveRows(QModelIndex(), index, index);
     m_tasks.removeAt(index);
-    m_tasksJson.removeAt(index);
     endRemoveRows();
-    saveTasks();
 }
 
 void TasksModel::editTaskName(QString name, int index){
@@ -56,13 +49,6 @@ void TasksModel::editTaskName(QString name, int index){
 
     auto *task = m_tasks.at(index);
     task->setName(name);
-
-    QJsonObject obj;
-    obj["name"] = name;
-    obj["completed"] = task->getCompleted();
-    auto qv = QJsonValue(obj);
-    m_tasksJson.replace(index, qv);
-    saveTasks();
 
     QModelIndex modelIndex = this->index(index);
     emit dataChanged(modelIndex, modelIndex, { NameRole });
@@ -75,13 +61,6 @@ void TasksModel::editTaskCompleted(int index, bool completed){
     auto *task = m_tasks.at(index);
     task->setCompleted(completed);
 
-    QJsonObject obj;
-    obj["name"] = task->getName();
-    obj["completed"] = completed;
-    auto qv = QJsonValue(obj);
-    m_tasksJson.replace(index, qv);
-    saveTasks();
-
     QModelIndex modelIndex = this->index(index);
     emit dataChanged(modelIndex, modelIndex, { CompletedRole });
 }
@@ -93,7 +72,15 @@ void TasksModel::saveTasks(){
         return;
     }
 
-    file.write(QJsonDocument(m_tasksJson).toJson());
+    QJsonArray jsonArray;
+    for(Task* task: std::as_const(m_tasks)){
+        QJsonObject obj;
+        obj["name"] = task->getName();
+        obj["completed"] = task->getCompleted();
+        auto qv = QJsonValue(obj);
+        jsonArray.append(qv);
+    }
+    file.write(QJsonDocument(jsonArray).toJson());
     file.close();
 }
 
@@ -110,17 +97,19 @@ void TasksModel::loadTasks(){
         qWarning() << "Error loading tasks - Invalid JSON";
         return;
     }
-    m_tasksJson = jsonDoc.array();
+    const auto jsonArray = jsonDoc.array();
 
     beginResetModel();
-    for (const QJsonValue &value: std::as_const(m_tasksJson)){
+    qDeleteAll(m_tasks);
+    m_tasks.clear();
+    for (const QJsonValue &value: jsonArray){
         auto task = value.toObject();
         m_tasks.append(new Task(task["name"].toString(), task["completed"].toBool(), this));
     }
     endResetModel();
 }
 
-int TasksModel::getCompleted(){
+int TasksModel::countCompleted(){
     int completed = 0;
     for(const Task *t : std::as_const(m_tasks)){
         if(t->getCompleted())
@@ -129,23 +118,22 @@ int TasksModel::getCompleted(){
     return completed;
 }
 
-double TasksModel::getCompletedPercentage(){
+double TasksModel::calculateCompletedPercentage(){
     int total = m_tasks.size();
     if(total == 0)
         return 0;
 
-    int completed = getCompleted();
+    int completed = countCompleted();
     return static_cast<double>(completed) * 100 / total;
 }
 
-int TasksModel::getRemaining(){
-    return m_tasks.size() - getCompleted();
+int TasksModel::countRemaining(){
+    return m_tasks.size() - countCompleted();
 }
 
 void TasksModel::clearAllTasks() {
     beginResetModel();
     qDeleteAll(m_tasks);
     m_tasks.clear();
-    m_tasksJson = QJsonArray();
     endResetModel();
 }
